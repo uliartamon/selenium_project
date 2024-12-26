@@ -5,8 +5,8 @@ from .locators import ProductPageLocators
 
 
 class ProductPage(BasePage):
-    def check_add_to_basket_is_presented(self):
-        assert self.is_element_present(*ProductPageLocators.ADD_BUTTON), 'Add button was not found'
+    '''def check_add_to_basket_is_presented(self):
+        assert self.is_element_present(*ProductPageLocators.ADD_BUTTON), 'Add button was not found'''
 
     def check_add_to_basket_button(self):
         
@@ -14,10 +14,12 @@ class ProductPage(BasePage):
         add_button.click()
         print('\nProduct added to basket')
 
-    def check_product_price(self):
+    def get_product_info(self):
         price = self.browser.find_element(*ProductPageLocators.PRODUCT_PRICE).text
-        return price.strip()
+        product_name = self.browser.find_element(*ProductPageLocators.PRODUCT_NAME).text
+        return price, product_name
     
-    def check_basket_sum(self):
-        basket_sum = self.browser.find_element(*ProductPageLocators.BASKET_SUM).text
-        return basket_sum.split('\n')[0].split(':')[-1].strip()
+    def get_alert_info(self):
+        basket_price = self.browser.find_element(*ProductPageLocators.BASKET_PRICE).text
+        product_name_info = self.browser.find_element(*ProductPageLocators.PRODUCT_NAME_INFO).text
+        return basket_price, product_name_info

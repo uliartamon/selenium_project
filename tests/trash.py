@@ -1,6 +1,8 @@
+import math
 import time
-import pytest
-from pages.product_page import ProductPage
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 
 URLS = ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
@@ -10,19 +12,24 @@ URLS = ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?pro
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer4",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer5",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer6",
-                                  pytest.param("http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer7", marks=pytest.mark.xfail),
+                                  "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer7",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer8",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer9"]
 
+with webdriver.Chrome() as browser:
+    for URL in URLS:
+        browser.get(URL)
+        price = browser.find_element(By.CSS_SELECTOR, 'div.product_main p.price_color')
+        product_name = browser.find_element(By.CSS_SELECTOR, 'div.col-sm-6.product_main h1')
 
-@pytest.mark.parametrize('URL', URLS) 
-def test_add_to_basket(browser, URL):
-    product_page = ProductPage(browser, URL)
-    product_page.open()
-    price, product_name = product_page.get_product_info()
-    product_page.check_add_to_basket_button()
-    product_page.solve_quiz_and_get_code()
-    time.sleep(2)
-    basket_price, product_name_info = product_page.get_alert_info()
-    assert price == basket_price, f'Basket price {basket_price} not equal product price {price}'
-    assert product_name == product_name_info, f'Product name info {product_name_info} not equal product name {product_name}'
+        browser.find_element(By.CSS_SELECTOR, 'button.btn.btn-lg.btn-primary.btn-add-to-basket').click()
+
+        alert = browser.switch_to.alert
+        x = alert.text.split(" ")[2]
+        answer = str(math.log(abs((12 * math.sin(float(x))))))
+        alert.send_keys(answer)
+        alert.accept()
+        time.sleep(30)
+
+    # собираем алерты: Deferred benefit offer - проверка для загрузки предложения
+
