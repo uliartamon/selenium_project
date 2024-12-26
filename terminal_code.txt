@@ -1,1 +1,3 @@
 python -m pytest -v --tb=line --language=en tests\test_main_page.py
+
+python -m pytest -s tests\test_product_page.py
